@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f0f0f">
+    <meta name="description" content="XOLERIƆ WebCode Professional - Kod muharriri">
+    <title>XOLƎRIƆ WebCode Pro</title>
+    
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22WebCode%20Pro%22%2C%22short_name%22%3A%22WebCode%20Pro%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22fullscreen%22%2C%22background_color%22%3A%22%230a0a0a%22%2C%22theme_color%22%3A%22%23d946ef%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fui-avatars.com%2Fapi%2F%3Fname%3DX%2B%2BPRO%26background%3D0a0a0a%26color%3Dd946ef%26size%3D192%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D">
+
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --panel-bg: rgba(17, 17, 17, 0.95);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(217, 70, 239, 0.5);
+            --brand-magenta: #d946ef;
+            --brand-cyan: #06b6d4;
+            --brand-purple: #a855f7;
+            --mac-red: #ff5f57;
+            --mac-yellow: #ffbd2e;
+            --mac-green: #28ca41;
+            --text-primary: #f4f4f5;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --code-green: #4ade80;
+            --code-blue: #60a5fa;
+            --code-orange: #fb923c;
+            --code-pink: #f472b6;
+            --code-purple: #c084fc;
+            --error-red: #ef4444;
+            --success-green: #22c55e;
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%; height: 100%;
+            background: var(--bg-primary);
+            overflow: hidden;
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #app {
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease;
+        }
+
+        #app.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .splash-screen {
+            position: fixed; inset: 0;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        .splash-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .splash-logo {
+            width: 120px; height: 120px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, var(--brand-magenta), var(--brand-purple));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            font-weight: 800;
+            color: #fff;
+            box-shadow: 0 0 60px rgba(217, 70, 239, 0.4);
+            margin-bottom: 40px;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 40px rgba(217, 70, 239, 0.3); transform: scale(1); }
+            50% { box-shadow: 0 0 80px rgba(217, 70, 239, 0.6); transform: scale(1.02); }
+        }
+
+        .splash-title {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, var(--brand-magenta), var(--brand-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .splash-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            letter-spacing: 6px;
+            margin-bottom: 50px;
+        }
+
+        .start-btn {
+            padding: 18px 60px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, var(--brand-magenta), var(--brand-purple));
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 10px 40px rgba(217, 70, 239, 0.35);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 50px rgba(217, 70, 239, 0.5);
+        }
+
+        .header {
+            background: var(--panel-bg);
+            backdrop-filter: blur(30px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            -webkit-app-region: drag;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            -webkit-app-region: no-drag;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.15s ease;
+        }
+
+        .dot:hover { transform: scale(1.2); }
+        .dot:active { transform: scale(0.9); }
+        
+        .dot.red { 
+            background: var(--mac-red); 
+            box-shadow: 0 0 15px rgba(255, 95, 87, 0.5);
+        }
+        .dot.yellow { 
+            background: var(--mac-yellow); 
+            box-shadow: 0 0 15px rgba(255, 189, 46, 0.5);
+        }
+        .dot.green { 
+            background: var(--mac-green); 
+            box-shadow: 0 0 15px rgba(40, 202, 65, 0.5);
+        }
+
+        .brand {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--text-secondary);
+        }
+
+        .brand span {
+            color: var(--brand-magenta);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            -webkit-app-region: no-drag;
+        }
+
+        .icon-btn {
+            width: 36px; height: 36px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border-color: var(--border-active);
+        }
+
+        .workspace {
+            flex: 1;
+            display: flex;
+            gap: 1px;
+            background: var(--border-color);
+            overflow: hidden;
+        }
+
+        .panel {
+            flex: 1;
+            background: var(--bg-secondary);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .panel-header {
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .tiny-btn {
+            width: 24px; height: 24px;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.15s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tiny-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .editor-wrapper {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .line-numbers {
+            padding: 16px 12px;
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: right;
+            user-select: none;
+            min-width: 45px;
+            border-right: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .code-editor {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--code-green);
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            caret-color: var(--brand-magenta);
+            overflow: auto;
+            white-space: pre;
+        }
+
+        .preview-frame {
+            flex: 1;
+            border: none;
+            background: #fff;
+        }
+
+        .console-panel {
+            height: 150px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: height 0.3s ease;
+        }
+
+        .console-panel.collapsed {
+            height: 36px;
+        }
+
+        .console-toggle {
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .console-toggle:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .console-title {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+        }
+
+        .console-output {
+            flex: 1;
+            padding: 12px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            overflow: auto;
+            color: var(--text-secondary);
+        }
+
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .log-entry.error {
+            color: var(--error-red);
+        }
+
+        .log-entry.success {
+            color: var(--success-green);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 4px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 6px;
+            min-width: 180px;
+            box-shadow: var(--shadow-lg);
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .dropdown-menu.visible {
+            display: flex;
+        }
+
+        .menu-item {
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.15s ease;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+        }
+
+        .status-bar {
+            background: var(--bg-tertiary);
+            border-top: 1px solid var(--border-color);
+            padding: 6px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .status-left, .status-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--success-green);
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #52525b;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            color: var(--text-primary);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toast.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .workspace {
+                flex-direction: column;
+            }
+            
+            .panel:first-child {
+                height: 50%;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .console-panel {
+                display: none;
+            }
+            
+            .header {
+                padding: 10px 14px;
+            }
+            
+            .brand {
+                font-size: 13px;
+            }
+        }
+
+        .pwa-install-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: linear-gradient(135deg, var(--brand-magenta), var(--brand-purple));
+            border: none;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 40px rgba(217, 70, 239, 0.4);
+            display: none;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .pwa-install-btn:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+
+    <button class="pwa-install-btn" id="pwaBtn">📲 O'rnatish</button>
+
+    <div class="splash-screen" id="splash">
+        <div class="splash-logo">X</div>
+        <div class="splash-title">WEB<span style="color:var(--brand-cyan)">CODE</span> PRO</div>
+        <div class="splash-subtitle">PROFESSIONAL EDITOR</div>
+        <button class="start-btn" id="startBtn">ISHGA TUSHIRISH</button>
+    </div>
+
+    <div id="app">
+        <header class="header">
+            <div class="header-left">
+                <div class="window-controls">
+                    <button class="dot red" onclick="clearCode()" title="Tozalash"></button>
+                    <button class="dot yellow" onclick="copyCode()" title="Nusxalash"></button>
+                    <button class="dot green" onclick="openFullscreen()" title="To'liq ekran"></button>
+                </div>
+                <div class="brand">XOL<span>ƎRIƆ</span></div>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn" onclick="formatCode()" title="Formatlash">⚡</button>
+                <button class="icon-btn" onclick="downloadCode()" title="Yuklab olish">⬇</button>
+                <button class="icon-btn" onclick="toggleMenu(event)" title="Menyu">☰</button>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="menu-item" onclick="pasteCode()">📋 Joylashtirish</div>
+                    <div class="menu-item" onclick="newFile()">📄 Yangi fayl</div>
+                    <div class="menu-item" onclick="resetEditor()">🔄 Qayta yuklash</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="workspace">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">KOD</span>
+                    <div class="panel-actions">
+                        <button class="tiny-btn" onclick="increaseFont()" title="Shrift katta">A+</button>
+                        <button class="tiny-btn" onclick="decreaseFont()" title="Shrift kichik">A-</button>
+                    </div>
+                </div>
+                <div class="editor-wrapper">
+                    <div class="line-numbers" id="lineNumbers">1</div>
+                    <textarea class="code-editor" id="codeEditor" spellcheck="false" placeholder="<html>&#10;  <head>&#10;    <title>Salom Dunyo!</title>&#10;  </head>&#10;  <body>&#10;    <h1>Salom, XOLERIƆ Pro!</h1>&#10;  </body>&#10;</html>"></textarea>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">NATUJA</span>
+                    <div class="panel-actions">
+                        <button class="tiny-btn" onclick="reloadPreview()" title="Qayta yuklash">↻</button>
+                        <button class="tiny-btn" onclick="openInNewTab()" title="Yangi tabda ochish">↗</button>
+                    </div>
+                </div>
+                <iframe class="preview-frame" id="previewFrame" sandbox="allow-scripts allow-modals allow-same-origin"></iframe>
+            </div>
+        </div>
+
+        <div class="console-panel" id="consolePanel">
+            <div class="console-toggle" onclick="toggleConsole()">
+                <span class="panel-title">KONSOLA</span>
+                <span id="consoleToggleIcon">▼</span>
+            </div>
+            <div class="console-output" id="consoleOutput">
+                <div class="log-entry success">[INFO] Muharrir tayyor. Kod yozishni boshlang!</div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-left">
+                <div class="status-item">
+                    <div class="status-dot"></div>
+                    <span>Tayyor</span>
+                </div>
+                <div class="status-item" id="cursorPos">Satr: 1, Ustun: 1</div>
+            </div>
+            <div class="status-right">
+                <div class="status-item">UTF-8</div>
+                <div class="status-item">HTML</div>
+                <div class="status-item" id="fileSize">0 KB</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const app = document.getElementById('app');
+        const splash = document.getElementById('splash');
+        const startBtn = document.getElementById('startBtn');
+        const codeEditor = document.getElementById('codeEditor');
+        const lineNumbers = document.getElementById('lineNumbers');
+        const previewFrame = document.getElementById('previewFrame');
+        const consoleOutput = document.getElementById('consoleOutput');
+        const consolePanel = document.getElementById('consolePanel');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const toast = document.getElementById('toast');
+        const pwaBtn = document.getElementById('pwaBtn');
+        const cursorPos = document.getElementById('cursorPos');
+        const fileSize = document.getElementById('fileSize');
+
+        let isRunning = false;
+        let fontSize = 14;
+        let debounceTimer;
+
+        startBtn.addEventListener('click', () => {
+            isRunning = true;
+            splash.classList.add('hidden');
+            app.classList.add('visible');
+            updatePreview();
+            enforceFullscreen();
+            log('Muharrir muvaffaqiyatli ishga tushdi!', 'success');
+        });
+
+        codeEditor.addEventListener('input', () => {
+            updateLineNumbers();
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(updatePreview, 500);
+            updateStatus();
+            captureConsole();
+        });
+
+        codeEditor.addEventListener('scroll', () => {
+            lineNumbers.scrollTop = codeEditor.scrollTop;
+        });
+
+        codeEditor.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = codeEditor.selectionStart;
+                const end = codeEditor.selectionEnd;
+                codeEditor.value = codeEditor.value.substring(0, start) + '  ' + codeEditor.value.substring(end);
+                codeEditor.selectionStart = codeEditor.selectionEnd = start + 2;
+                updateLineNumbers();
+            }
+        });
+
+        codeEditor.addEventListener('click', updateCursorPos);
+        codeEditor.addEventListener('keyup', updateCursorPos);
+
+        function updateLineNumbers() {
+            const lines = codeEditor.value.split('\n').length;
+            let nums = '';
+            for (let i = 1; i <= lines; i++) {
+                nums += i + '\n';
+            }
+            lineNumbers.textContent = nums;
+        }
+
+        function updatePreview() {
+            if (!isRunning) return;
+            const code = codeEditor.value;
+            previewFrame.srcdoc = code;
+        }
+
+        function reloadPreview() {
+            updatePreview();
+            log('Natija yangilandi', 'success');
+        }
+
+        function updateCursorPos() {
+            const text = codeEditor.value.substring(0, codeEditor.selectionStart);
+            const lines = text.split('\n');
+            const line = lines.length;
+            const column = lines[lines.length - 1].length + 1;
+            cursorPos.textContent = `Satr: ${line}, Ustun: ${column}`;
+        }
+
+        function updateStatus() {
+            const bytes = new Blob([codeEditor.value]).size;
+            const kb = (bytes / 1024).toFixed(1);
+            fileSize.textContent = `${kb} KB`;
+        }
+
+        function captureConsole() {
+            const originalLog = console.log;
+            const originalError = console.error;
+            
+            console.log = (...args) => {
+                log(args.join(' '), 'info');
+                originalLog.apply(console, args);
+            };
+            
+            console.error = (...args) => {
+                log(args.join(' '), 'error');
+                originalError.apply(console, args);
+            };
+        }
+
+        function log(message, type = 'info') {
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${time}] ${message}`;
+            consoleOutput.appendChild(entry);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+
+        function clearCode() {
+            codeEditor.value = '';
+            updateLineNumbers();
+            updatePreview();
+            updateStatus();
+            showToast('Kod tozalandi');
+        }
+
+        function copyCode() {
+            codeEditor.select();
+            document.execCommand('copy');
+            showToast('Kod nusxalandi');
+        }
+
+        function pasteCode() {
+            navigator.clipboard.readText().then(text => {
+                codeEditor.value += text;
+                updateLineNumbers();
+                updatePreview();
+                updateStatus();
+                showToast('Kod joylashtirildi');
+            }).catch(() => showToast('Ruxsat kerak!'));
+        }
+
+        function downloadCode() {
+            const blob = new Blob([codeEditor.value], {type: 'text/html'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'index.html';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Fayl yuklab olindi');
+        }
+
+        function newFile() {
+            if (codeEditor.value && !confirm('Joriy fayl ochiladi. Davom eta olasizmi?')) return;
+            codeEditor.value = '';
+            updateLineNumbers();
+            updatePreview();
+            updateStatus();
+            showToast('Yangi fayl yaratildi');
+        }
+
+        function formatCode() {
+            let code = codeEditor.value;
+            code = code.replace(/></g, '>\n<');
+            codeEditor.value = code;
+            updateLineNumbers();
+            showToast('Kod formatlandi');
+        }
+
+        function resetEditor() {
+            window.location.reload();
+        }
+
+        function toggleMenu(e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('visible');
+        }
+
+        document.addEventListener('click', () => {
+            dropdownMenu.classList.remove('visible');
+        });
+
+        function toggleConsole() {
+            consolePanel.classList.toggle('collapsed');
+            const icon = document.getElementById('consoleToggleIcon');
+            icon.textContent = consolePanel.classList.contains('collapsed') ? '▲' : '▼';
+        }
+
+        function increaseFont() {
+            if (fontSize < 24) {
+                fontSize += 2;
+                codeEditor.style.fontSize = fontSize + 'px';
+                lineNumbers.style.fontSize = fontSize + 'px';
+            }
+        }
+
+        function decreaseFont() {
+            if (fontSize > 10) {
+                fontSize -= 2;
+                codeEditor.style.fontSize = fontSize + 'px';
+                lineNumbers.style.fontSize = fontSize + 'px';
+            }
+        }
+
+        function openFullscreen() {
+            if (previewFrame.requestFullscreen) {
+                previewFrame.requestFullscreen();
+            } else if (previewFrame.webkitRequestFullscreen) {
+                previewFrame.webkitRequestFullscreen();
+            }
+        }
+
+        function openInNewTab() {
+            const code = codeEditor.value;
+            const blob = new Blob([code], {type: 'text/html'});
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+        }
+
+        function enforceFullscreen() {
+            if (!isRunning) return;
+            const docEl = document.documentElement;
+            if (!document.fullscreenElement) {
+                if (docEl.requestFullscreen) docEl.requestFullscreen().catch(() => {});
+                else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen().catch(() => {});
+            }
+        }
+
+        document.addEventListener('click', enforceFullscreen);
+
+        window.onpopstate = () => {
+            window.history.pushState(null, null, window.location.href);
+            enforceFullscreen();
+        };
+
+        history.pushState(null, null, location.href);
+
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('visible');
+            setTimeout(() => toast.classList.remove('visible'), 2500);
+        }
+
+        const swCode = `
+            self.addEventListener('install', e => self.skipWaiting());
+            self.addEventListener('activate', e => self.clients.claim());
+            self.addEventListener('fetch', e => {});
+        `;
+        
+        if ('serviceWorker' in navigator) {
+            const blob = new Blob([swCode], {type: 'application/javascript'});
+            const swUrl = URL.createObjectURL(blob);
+            navigator.serviceWorker.register(swUrl);
+        }
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', e => {
+            e.preventDefault();
+            deferredPrompt = e;
+            pwaBtn.style.display = 'block';
+        });
+
+        pwaBtn.addEventListener('click', async e => {
+            e.stopPropagation();
+            if (deferredPrompt) {
+                const outcome = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    pwaBtn.style.display = 'none';
+                }
+                deferredPrompt = null;
+            }
+        });
+    </script>
+</body>
+</html>
